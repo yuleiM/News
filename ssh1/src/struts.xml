@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="ssh" namespace="/" extends="struts-default">
+		<action name="index" class="NewsinfoAction" method="index">
+			<result name="index">/index.jsp</result>
+		</action>
+		
+		<action name="indexsidebar" class="NewsinfoAction" method="indexsidebar">
+			<result name="index_sidebar">/index_sidebar.jsp</result>
+		</action>
+
+		<action name="newsread" class="NewsinfoAction" method="newsread">
+			<result name="news_read">/newsread.jsp</result>
+		</action>
+		<action name="login" class="AdminAction" method="login">
+			<result name="admin" type="redirectAction">index2</result>
+			<result name="login">/login.html</result>
+		</action>
+
+		<action name="index2" class="NewsinfoAction" method="admin">
+			<result name="admin">admin/index2.jsp</result>
+		</action>
+
+		<action name="NewsAdd" class="NewsinfoAction" method="newsadd">
+			<result name="news_add">admin/news_add.jsp</result>
+		</action>
+
+		<action name="doNewsAdd" class="NewsinfoAction" method="addNews">
+			<result name="admin" type="redirectAction">index2</result>
+		</action>
+
+		<action name="NewsModitf" class="NewsinfoAction" method="newsModitf">
+			<result name="news_moditf">admin/news_moditf.jsp</result>
+		</action>
+
+		<action name="doNewsModify" class="NewsinfoAction" method="donewsModitf">
+			<result name="admin" type="redirectAction">index2</result>
+		</action>
+
+		<action name="delectNews" class="NewsinfoAction" method="delectNews">
+			<result name="admin" type="redirectAction">index2</result>
+		</action>
+
+		<!-- 退出登录 -->
+		<action name="out" class="NewsinfoAction" method="out">
+			<result name="out" type="redirectAction">index</result>
+		</action>
+
+		<!-- 添加主题 -->
+		<action name="addtopic" class="TopicAction" method="addtopic">
+			<result name="admin" type="redirectAction">index2</result>
+		</action>
+
+		<action name="topiclist" class="TopicAction" method="topiclist">
+			<result name="topic_list">admin/topic_list.jsp</result>
+		</action>
+		<action name="toTopicModify" class="TopicAction" method="toTopicModify">
+			<result name="topic_modify">admin/topic_modify.jsp</result>
+		</action>
+
+		<action name="doTopicModify" class="TopicAction" method="doTopicModify">
+			<result name="topicList" type="redirectAction">index2</result>
+		</action>
+
+		<action name="deletetopic" class="TopicAction" method="deletetopic">
+			<result name="topicList" type="redirectAction">index2</result>
+		</action>
+	</package>
+</struts>    

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql:///news?useUnicode=true&amp;characterEncoding=gb2312"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>com/yl/entity/Admin.hbm.xml</value>
+				<value>com/yl/entity/Topic.hbm.xml</value>
+				<value>com/yl/entity/Newsinfo.hbm.xml</value></list>
+		</property></bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!--  定义事务通知    --> 
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">	 
+	  <tx:attributes>	 
+	  	<tx:method name="*" propagation="REQUIRED" /> 
+	  </tx:attributes>
+	</tx:advice>
+	
+    <!--定义切面，并将事务通知和切面组合（定义哪些方法应用事务规则） -->
+    <aop:config>
+        <!-- 对com.news.biz包下的所有类的所有方法都应用事务规则 -->
+    	<aop:pointcut id="bizMethods" expression="execution(* com.yl.biz.*.*(..))" /> 
+    	<!--  将事务通知和切面组合   --> 
+    	<aop:advisor advice-ref="txAdvice" pointcut-ref="bizMethods" /> 
+    </aop:config>
+    
+    <bean id="NewsinfoDao" class="com.yl.dao.impl.NewsinfoDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    <bean id="NewsinfoBiz" class="com.yl.biz.impl.NewsinfoBizImpl">
+    	<property name="newsinfodao" ref="NewsinfoDao"></property>
+    </bean>
+    
+    <bean id="TopicDao" class="com.yl.dao.impl.TopicDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    <bean id="TopicBiz" class="com.yl.biz.impl.TopicBizImpl">
+    	<property name="topicdao" ref="TopicDao"></property>
+    </bean>
+    
+    <bean id="NewsinfoAction" class="com.yl.action.NewsinfoAction">
+    	<property name="topicbiz" ref="TopicBiz"></property>
+    	<property name="newsinfobiz" ref="NewsinfoBiz"></property>
+    </bean>
+    
+    <bean id="AdminDao" class="com.yl.dao.impl.AdminDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    <bean id="AdminBiz" class="com.yl.biz.impl.AdminBizImpl">
+    	<property name="adminDao" ref="AdminDao"></property>
+    </bean>
+    
+    <!-- 管理员Action -->
+    <bean id="AdminAction" class="com.yl.action.AdminAction" scope="prototype">
+    	<property name="adminBiz" ref="AdminBiz"></property>
+    </bean>
+    
+    <!-- 主题Action -->
+    <bean id="TopicAction" class="com.yl.action.TopicAction" scope="prototype">
+    	<property name="topicBiz" ref="TopicBiz"></property>
+    </bean>
+	</beans>
